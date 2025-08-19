@@ -6,7 +6,7 @@ const Pet = sequelize.define('Pet', {
   ownerId: { type: DataTypes.INTEGER, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
   species: { type: DataTypes.STRING, allowNull: false },
-  nextWalk: { type: DataTypes.DATE },
+  nextFeed: { type: DataTypes.DATE },
   nextVet: { type: DataTypes.DATE },
   photo: { type: DataTypes.STRING }
 });
