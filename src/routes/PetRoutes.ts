@@ -1,51 +1,19 @@
 import express from 'express';
-import multer from 'multer';
-import { getPets, createPet, updatePet, getPetById } from '../controllers/PetController';
+import * as PetController from '../controllers/PetController';
+import upload from '../middleware/multerConfig';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
 
-// GET - /api/pets?ownerId=1
-router.get('/', async (req, res) => {
-  try {
-    const ownerId = Number(req.query.ownerId);
-    if (!ownerId) return res.status(400).json({ error: 'Owner Id required!' });
+// Route to add a new pet (with photo upload)
+router.post('/pets', upload.single('photo'), PetController.addPet); // 'photo' is the field name in the form
 
-    const pets = await getPets(ownerId);
-    res.json(pets);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message || 'Failed to fetch pets!' });
-  }
-});
+// Route to update pet profile (with photo upload)
+router.put('/pets/:id', upload.single('photo'), PetController.updatePet);
 
-// GET - /api/pets/:id
-router.get('/:id', async (req, res) => {
-  try {
-    const pet = await getPetById(Number(req.params.id));
-    res.json(pet);
-  } catch (err: any) {
-    res.status(404).json({ error: err.message });
-  }
-});
+//get all pets
+router.get('/pets', PetController.getPets);
 
-// POST - /api/pets  --photo optional
-router.post('/', upload.single('photo'), async (req, res) => {
-  try {
-    const pet = await createPet(req.body, req.file?.path);
-    res.status(201).json(pet);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-// PUT - /api/pets/:id --photo optional
-router.put('/:id', upload.single('photo'), async (req, res) => {
-  try {
-    const pet = await updatePet(Number(req.params.id), req.body, req.file?.path);
-    res.json(pet);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// get a specific pet by ID
+router.get('/pets/:id', PetController.getPetById);
 
 export default router;

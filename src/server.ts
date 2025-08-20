@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
   res.json('API Working!');
 });
 
-//serve upload images
+//serve uploaded images
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.use('/api/pets', petsRouter);
